@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken'
-import JWTUtils from "../../utils/jwt.utils";
+import JWTUtils from "../../src/utils/jwt.utils";
 
 describe('jwt utils', () => {
     it('should return an access token', () => {
