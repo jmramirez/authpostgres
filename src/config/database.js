@@ -1,10 +1,10 @@
 module.exports = {
     development: {
-        username: process.env.DB_USERNAME || 'postgres',
-        password: process.env.DB_PASSWORD || 'posgres',
+        username: process.env.DB_USERNAME || 'jmramirez',
+        password: process.env.DB_PASSWORD || 'devapplication',
         host: process.env.DB_HOST || 'localhost',
-        port: parseInt(process.env.DB_PORT) || 5433,
-        database: process.env.DB_DATABASE || 'postgres',
+        port: parseInt(process.env.DB_PORT) || 5432,
+        database: process.env.DB_DATABASE || 'sequelize_dev',
         dialect: 'postgres'
     },
     test: {
