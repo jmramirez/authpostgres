@@ -1,6 +1,6 @@
 import environment from './config/environment'
 import app from './express'
-import dbConfig from './config/databse'
+import dbConfig from './config/database'
 import Database from './database'
 
 (async () => {
