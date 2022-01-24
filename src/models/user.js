@@ -13,7 +13,7 @@ export default (sequelize) => {
             return bcrypt.hash(password, environment.saltRounds)
         }
 
-        static async createNewUser({ email, password, roles, userName, firstName, lastName, refreshToken}) {
+        static async createNewUser({ email, password, roles, username, firstName, lastName, refreshToken}) {
             return sequelize.transaction(() => {
                 let rolesToSave = []
 
@@ -21,7 +21,7 @@ export default (sequelize) => {
                     rolesToSave = roles.map((role) => ({role}))
                 }
 
-                User.create({email,password,userName,firstName, lastName, RefreshToke:{token:refreshToken}, Roles: rolesToSave},
+                return User.create({email,password,username,firstName, lastName, RefreshToken:{token:refreshToken}, Roles: rolesToSave},
                     {include: [User.RefreshToken, User.Roles]})
             })
         }
@@ -35,6 +35,9 @@ export default (sequelize) => {
             validate: {
                 isEmail: {
                     msg: 'Not a valid email address'
+                },
+                notNull: {
+                    msg: 'Email is required'
                 }
             }
         },
@@ -84,8 +87,10 @@ export default (sequelize) => {
     }
 
     User.beforeSave(async (user, options) => {
-        const hashedPassword = await User.hashPassword(user.password)
-        user.password = hashedPassword
+        if(user.password) {
+            const hashedPassword = await User.hashPassword(user.password)
+            user.password = hashedPassword
+        }
     })
 
     User.afterCreate((user,options) => {
