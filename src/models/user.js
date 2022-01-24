@@ -14,14 +14,14 @@ export default (sequelize) => {
         }
 
         static async createNewUser({ email, password, roles, userName, firstName, lastName, refreshToken}) {
-            return sequelize.transaction(async () => {
+            return sequelize.transaction(() => {
                 let rolesToSave = []
 
                 if(roles && Array.isArray(roles)) {
                     rolesToSave = roles.map((role) => ({role}))
                 }
 
-                await User.create({email,password,userName,firstName, lastName, RefreshToke:{token:refreshToken}, Roles: rolesToSave},
+                User.create({email,password,userName,firstName, lastName, RefreshToke:{token:refreshToken}, Roles: rolesToSave},
                     {include: [User.RefreshToken, User.Roles]})
             })
         }
@@ -86,6 +86,10 @@ export default (sequelize) => {
     User.beforeSave(async (user, options) => {
         const hashedPassword = await User.hashPassword(user.password)
         user.password = hashedPassword
+    })
+
+    User.afterCreate((user,options) => {
+        delete user.dataValues.password
     })
 
     return User
