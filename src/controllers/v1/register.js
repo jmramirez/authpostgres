@@ -1,26 +1,34 @@
-import { Router } from 'express'
-import models from '../../models'
-import JWTUtils from '../../utils/jwt.utils'
-import asyncWrapper from '../../utils/asyncWrapper'
+import { Router } from 'express';
+import models from '../../models';
+import JWTUtils from '../../utils/jwt.utils';
+import asyncWrapper from '../../utils/asyncWrapper';
 
-const router = Router()
-const {User} = models
+const router = Router();
+const { User } = models;
 
-router.post('/register', asyncWrapper(async(req,res) => {
-    const { email } = req.body
-    const user = await User.findOne({ where: { email }})
+router.post(
+  '/register',
+  asyncWrapper(async (req, res) => {
+    const { email } = req.body;
+    const user = await User.findOne({ where: { email } });
 
-    if(user) {
-        return res.status(200).send({ success: false, message: 'User already exists'})
+    if (user) {
+      return res
+        .status(200)
+        .send({ success: false, message: 'User already exists' });
     }
 
-    const payload = { email }
-    const accessToken = JWTUtils.generateAccessToken(payload)
-    const refreshToken = JWTUtils.generateRefreshToken(payload)
-    await User.createNewUser({ ...req.body, refreshToken})
+    const payload = { email };
+    const accessToken = JWTUtils.generateAccessToken(payload);
+    const refreshToken = JWTUtils.generateRefreshToken(payload);
+    await User.createNewUser({ ...req.body, refreshToken });
 
-    return res.status(200).send({ success: true, message: 'User registered successfully', data: {accessToken,refreshToken}})
-
-}))
+    return res.status(200).send({
+      success: true,
+      message: 'User registered successfully',
+      data: { accessToken, refreshToken },
+    });
+  })
+);
 
 export default router;
