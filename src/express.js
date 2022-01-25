@@ -22,7 +22,7 @@ export default class App {
     }
 
     getApp() {
-        return this.app()
+        return this.app
     }
 
     listen() {
