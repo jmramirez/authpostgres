@@ -1,24 +1,35 @@
 import express from 'express'
-import bodyParser from 'body-parser'
-import cookieParser from 'cookie-parser'
-import compress from 'compression'
 import errorsMiddleware from './middlewares/errors';
 import { v1Routes } from './controllers'
+import environment from './config/environment'
+import logger from 'morgan'
 
-const app = express()
+export default class App {
+    constructor() {
+        this.app = express()
+        this.app.use(logger('dev', { skip: (req,res)=> environment.env === 'test'}))
+        this.app.use(express.json())
+        this.app.use(express.urlencoded({ extended: true }))
+        this.app.get('/',(req,res) => {
+            res.send('Hello world')
+        })
+        this.setRoutes()
+    }
 
-app.use(bodyParser.json())
-app.use(bodyParser.urlencoded({ extended: true }))
-app.use(cookieParser())
-app.use(compress())
-app.use(errorsMiddleware)
+    setRoutes() {
+        this.app.use('/v1', v1Routes)
+        this.app.use(errorsMiddleware)
+    }
 
-app.use('/v1', v1Routes)
+    getApp() {
+        return this.app()
+    }
 
-
-app.get('/',(req,res) => {
-    res.send('Hello world')
-})
-
-export default app
+    listen() {
+        const { port } = environment
+        this.app.listen(port, () => {
+            console.log(`Listening at port ${port}`)
+        })
+    }
+}
 
